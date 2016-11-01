@@ -100,69 +100,6 @@ capitalCities = {
     'valga': DARK_SKY_URL + API_KEY + '/57.7799,26.0628'
 }
 
-estonianCities = [
-    {
-        'name': 'tallinn',
-        'coordinates': '59.4372,24.7454',
-    },
-    {
-        'name': 'tartu',
-        'coordinates': '58.3727,26.7238',
-    },
-    {
-        'name': 'viljandi',
-        'coordinates': '58.3563,25.5851',
-    },
-    {
-        'name': 'pärnu',
-        'coordinates': '58.3801,24.52',
-    },
-    {
-        'name': 'haapsalu',
-        'coordinates': '58.9339,23.5428',
-    },
-    {
-        'name': 'jõgeva',
-        'coordinates': '58.7441,26.3872',
-    },
-    {
-        'name': 'kärdla',
-        'coordinates': '58.9943,22.7459',
-    },
-    {
-        'name': 'kuressaare',
-        'coordinates': '58.2528,22.4849',
-    },
-    {
-        'name': 'võru',
-        'coordinates': '57.8356,27.0028',
-    },
-    {
-        'name': 'rakvere',
-        'coordinates': '59.3453,26.3619',
-    },
-    {
-        'name': 'paide',
-        'coordinates': '58.8869,25.5699',
-    },
-    {
-        'name': 'rapla',
-        'coordinates': '58.9992,24.8047',
-    },
-    {
-        'name': 'jõhvi',
-        'coordinates': '59.358,27.4189',
-    },
-    {
-        'name': 'põlva',
-        'coordinates': '58.0536,27.0583',
-    },
-    {
-        'name': 'valga',
-        'coordinates': '57.7799,26.0628',
-    }
-]
-
 
 def dumpjson(dict):
     return json.dumps(dict, ensure_ascii=False).encode('utf-8')
@@ -218,6 +155,7 @@ def search_location(location):
         fulldict = {}
         fulldict['location'] = darkSky.data
         fulldict['location']['name'] = location.title()
+        fulldict['location']['coordinates'] = coordinates
         output = dumpjson(fulldict)
     except IndexError:
         output = abort(404)
@@ -241,14 +179,17 @@ def search_location_endpoints(location, endpoint):
         if endpoint == 'current':
             darkSky.data['currently']['name'] = location.title()
             fulldict['location'] = darkSky.data['currently']
+            fulldict['location']['coordinates'] = coordinates
             output = dumpjson(fulldict)
         elif endpoint == 'forecast':
             darkSky.data['daily']['name'] = location.title()
             fulldict['location'] = darkSky.data['daily']
+            fulldict['location']['coordinates'] = coordinates
             output = dumpjson(fulldict)
         elif endpoint == 'basic':
             fulldict['location'] = darkSky.basicforecast()
             fulldict['location']['name'] = location.title()
+            fulldict['location']['coordinates'] = coordinates
             output = dumpjson(fulldict)
         else:
             url = getURL(coordinates, endpoint)
@@ -270,10 +211,10 @@ def coordinates(coordinates):
     try:
         fulldict = {}
         location = parseJson(url, DarkSky)
-        coordinates = coordinates.split(',', 1)
         name = geolocator.reverse(coordinates)
         fulldict['location'] = location.data
         fulldict['location']['address'] = name.address
+        fulldict['location']['coordinates'] = coordinates
         output = dumpjson(fulldict)
     except NameError:
         output = abort(404)
@@ -290,19 +231,21 @@ def coordinates_endpoints(coordinates, endpoint):
     try:
         fulldict = {}
         darkSky = parseJson(url, DarkSky)
-        coordinates = coordinates.split(',', 1)
         name = geolocator.reverse(coordinates)
         if endpoint == 'current':
             darkSky.data['currently']['address'] = name.address
             fulldict['location'] = darkSky.data['currently']
+            fulldict['location']['coordinates'] = coordinates
             output = dumpjson(fulldict)
         elif endpoint == 'forecast':
             darkSky.data['daily']['address'] = name.address
             fulldict['location'] = darkSky.data['daily']
+            fulldict['location']['coordinates'] = coordinates
             output = dumpjson(fulldict)
         elif endpoint == 'basic':
             fulldict['location'] = darkSky.basicforecast()
             fulldict['location']['address'] = name.address
+            fulldict['location']['coordinates'] = coordinates
             output = dumpjson(fulldict)
         else:
             url = getURL(coordinates, endpoint)
@@ -424,4 +367,3 @@ CORS(app, resources=r'/*')
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=APP_PORT)
-    
