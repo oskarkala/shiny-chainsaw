@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, abort, Blueprint, jsonify, make_response
 from flask_cors import CORS
+from flask_graylog_local import Graylog
 from location_class import DarkSky
 from geonames_parser import Geonames
 from geopy.geocoders import Nominatim
+from urllib import error
 import time
 import urllib.request
 import json
 import urllib
 import os
 import urllib.parse
+import logging
 #
 # PM Weather API  
 #
@@ -58,6 +61,12 @@ import urllib.parse
 #
 
 API_KEY = os.environ['API_KEY']
+
+GRAYLOG_SERVER_HOST = os.environ['GRAYLOG_SERVER_HOST']
+
+GRAYLOG_SERVER_PORT = 12201
+if 'GRAYLOG_SERVER_PORT' in os.environ:
+    GRAYLOG_SERVER_PORT = os.environ['GRAYLOG_SERVER_PORT']
 
 APP_PORT = 80
 if 'APP_PORT' in os.environ:
@@ -112,6 +121,7 @@ def encoding(slug):
 
 def getGeoNames(slug):
     try:
+        abort(500)
         url = GEONAMES_URL + slug + '&featureClass=A&featureClass=P&maxRows=10&username=valgev6lur'
     except NameError:
         abort(404)
@@ -131,11 +141,16 @@ def getURL(location, unix=None):
 
 
 def parseJson(url, Class):
-    parsingJson = urllib.request.urlopen(url).read()
-    html = str(parsingJson, 'utf-8')
-    jsonReady = json.loads(html)
-    result = Class(jsonReady)
-    return result
+    try:
+        parsingJson = urllib.request.urlopen(url).read()
+        html = str(parsingJson, 'utf-8')
+        jsonReady = json.loads(html)
+        result = Class(jsonReady)
+        return result
+    except error.HTTPError as e:
+        abort(e.code)
+    except ImportError:
+        abort(500)
 
 
 # Search for locations around the world. This method returns a DarkSky API request,
@@ -345,13 +360,18 @@ def get_city_for_map(city_name):
 
 
 @bp.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({'error': 'Not found!'}), 404)
+def not_found(e):
+    return make_response(jsonify({'error': 'Error 404 Not Found'}), 404)
 
 
 @bp.errorhandler(500)
-def oops(error):
-    return make_response(jsonify({'error': 'Something went wrong!'}), 500)
+def oops(e):
+    return make_response(jsonify({'error': 'Error 500 Internal Server Error'}), 500)
+
+
+@bp.errorhandler(503)
+def oops(e):
+    return make_response(jsonify({'error': 'Error 503 Service Unavailable'}), 503)
 
 
 @bp.after_request
@@ -365,5 +385,17 @@ app = Flask(__name__)
 app.register_blueprint(bp, url_prefix=APP_URL_PREFIX)
 CORS(app, resources=r'/*')
 
+app.config['GRAYLOG_HOST'] = GRAYLOG_SERVER_HOST
+app.config['GRAYLOG_PORT'] = int(GRAYLOG_SERVER_PORT)
+graylog = Graylog(app)
+
+graylog.info('Message', extra={
+    'extra': 'metadata',
+})
+
+logger = logging.getLogger(__name__)
+logger.addHandler(graylog.handler)
+logger.info('Message')
+
 if __name__ == '__main__':
-        app.run(host='0.0.0.0', port=APP_PORT)
+        app.run(host='0.0.0.0', port=int(APP_PORT))
