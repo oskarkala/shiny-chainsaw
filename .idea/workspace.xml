@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5ce1067a-25c2-4d74-b7f4-4939cd94f618" name="Default" comment="graylog support">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/flask_graylog_local.py" />
+    <list default="true" id="5ce1067a-25c2-4d74-b7f4-4939cd94f618" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/darksky_api.py" afterPath="$PROJECT_DIR$/darksky_api.py" />
     </list>
     <ignored path="emhi_api.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,8 +32,8 @@
       <file leaf-file-name="darksky_api.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/darksky_api.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5456">
-              <caret line="386" column="0" selection-start-line="386" selection-start-column="0" selection-end-line="386" selection-end-column="0" />
+            <state relative-caret-position="-3811">
+              <caret line="127" column="0" selection-start-line="127" selection-start-column="0" selection-end-line="127" selection-end-column="0" />
               <folding>
                 <element signature="e#24#89#0" expanded="true" />
                 <element signature="e#398#399#0" expanded="false" />
@@ -765,14 +762,21 @@
       <option name="project" value="LOCAL" />
       <updated>1478001528422</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="graylog support">
+      <created>1479134595303</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1479134595303</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-143" y="-1138" width="1726" height="1042" extended-state="0" />
     <editor active="false" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17814727" sideWeight="0.4884393" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17814727" sideWeight="0.4884393" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -825,7 +829,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="cleanup, added coordinates as a JSON attribute to a geonames request" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleanup, added coordinates as a JSON attribute to a geonames request" />
+    <MESSAGE value="graylog support" />
+    <option name="LAST_COMMIT_MESSAGE" value="graylog support" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1110,8 +1115,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/darksky_api.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5456">
-          <caret line="386" column="0" selection-start-line="386" selection-start-column="0" selection-end-line="386" selection-end-column="0" />
+        <state relative-caret-position="-3811">
+          <caret line="127" column="0" selection-start-line="127" selection-start-column="0" selection-end-line="127" selection-end-column="0" />
           <folding>
             <element signature="e#24#89#0" expanded="true" />
             <element signature="e#398#399#0" expanded="false" />

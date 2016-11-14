@@ -121,7 +121,6 @@ def encoding(slug):
 
 def getGeoNames(slug):
     try:
-        abort(500)
         url = GEONAMES_URL + slug + '&featureClass=A&featureClass=P&maxRows=10&username=valgev6lur'
     except NameError:
         abort(404)
