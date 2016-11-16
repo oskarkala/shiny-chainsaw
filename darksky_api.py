@@ -77,8 +77,12 @@ if 'APP_URL_PREFIX' in os.environ:
     APP_URL_PREFIX = os.environ['APP_URL_PREFIX']
 
 DARK_SKY_URL = 'https://api.darksky.net/forecast/'
-DARK_SKY_BASIC_SUFFIX = '?units=si'
-DARK_SKY_UNIX_SUFFIX = '?exclude=currently&units=si'
+
+DARK_SKY_SUFFIX = '?units=si&lang=et'
+if 'DARK_SKY_SUFFIX' in os.environ:
+    DARK_SKY_SUFFIX = os.environ['DARK_SKY_SUFFIX']
+
+DARK_SKY_UNIX_SUFFIX = '?exclude=currently&lang=et&units=si'
 bp = Blueprint('weather', __name__,
                template_folder='templates')
 
@@ -120,10 +124,7 @@ def encoding(slug):
 
 
 def getGeoNames(slug):
-    try:
-        url = GEONAMES_URL + slug + '&featureClass=A&featureClass=P&maxRows=10&username=valgev6lur'
-    except NameError:
-        abort(404)
+    url = GEONAMES_URL + slug + '&featureClass=A&featureClass=P&maxRows=10&username=valgev6lur'
     return url
 
 
@@ -136,7 +137,7 @@ def getURL(location, unix=None):
     location = location.lower()
     if unix is not None:
         return DARK_SKY_URL + API_KEY + '/' + location + ',' + unix + DARK_SKY_UNIX_SUFFIX
-    return DARK_SKY_URL + API_KEY + '/' + location + DARK_SKY_BASIC_SUFFIX
+    return DARK_SKY_URL + API_KEY + '/' + location + DARK_SKY_SUFFIX
 
 
 def parseJson(url, Class):
@@ -277,7 +278,7 @@ def coordinates_endpoints(coordinates, endpoint):
 @bp.route('/<city_name>')
 def cities(city_name):
     try:
-        url = capitalCities[city_name] + DARK_SKY_BASIC_SUFFIX
+        url = capitalCities[city_name] + DARK_SKY_SUFFIX
     except KeyError:
         abort(404)
     try:
@@ -296,7 +297,7 @@ def cities(city_name):
 @bp.route('/<city_name>/<endpoint>')
 def cities_endpoints(city_name, endpoint):
     try:
-        url = capitalCities[city_name] + DARK_SKY_BASIC_SUFFIX
+        url = capitalCities[city_name] + DARK_SKY_SUFFIX
     except KeyError:
         abort(404)
     try:
@@ -341,7 +342,7 @@ def get_estonian_map():
 @bp.route('/estonian_map/<city_name>')
 def get_city_for_map(city_name):
     try:
-        url = capitalCities[city_name] + DARK_SKY_BASIC_SUFFIX
+        url = capitalCities[city_name] + DARK_SKY_SUFFIX
     except KeyError:
         abort(404)
     try:
