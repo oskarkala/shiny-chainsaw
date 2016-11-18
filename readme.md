@@ -25,13 +25,13 @@ Coordinates also gives the address of the specified coordinates. Its JSON field 
   
 Every response is in **JSON:** first element is 'location' and every 'location' has a 'name' attribute.   (Coordinates has an 'address' field instead.)  
   
-**Environment variables:**
+**Environment variables:**  
 'DARK_SKY_SUFFIX': '?units=si&lang=et' is default (Estonian).  
-'API-KEY'  
-'GRAYLOG-SERVER-HOST'  
-'GRAYLOG-SERVER-PORT': 12201 is default.  
-'APP-PORT': 80 is default.  
-'APP-URL-PREFIX'  
+'API_KEY'  
+'GRAYLOG_SERVER_HOST'  
+'GRAYLOG_SERVER_PORT': 12201 is default.  
+'APP_PORT': 80 is default.  
+'APP_URL_PREFIX'  
   
 
 **15 cities (county capitals of Estonia):**  

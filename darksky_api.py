@@ -359,18 +359,23 @@ def get_city_for_map(city_name):
     return output
 
 
+@bp.route('/test/<error_code>')
+def error500(error_code):
+    abort(int(error_code))
+
+
 @bp.errorhandler(404)
-def not_found(e):
+def fourofour(e):
     return make_response(jsonify({'error': 'Error 404 Not Found'}), 404)
 
 
 @bp.errorhandler(500)
-def oops(e):
+def fiveoo(e):
     return make_response(jsonify({'error': 'Error 500 Internal Server Error'}), 500)
 
 
 @bp.errorhandler(503)
-def oops(e):
+def fiveothree(e):
     return make_response(jsonify({'error': 'Error 503 Service Unavailable'}), 503)
 
 
