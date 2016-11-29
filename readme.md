@@ -1,6 +1,6 @@
 # PM Weather API  
   
-**/search/\<location\>**  
+**/search/\<countrycode\>/\<location\>** (ee/EE for Estonia)  
 Searches the Geonames database for the corresponding location, takes the coordinates of the first results and   sends them to the Darksky API request. Fetches full data if no further endpoint is specified. (/current, /  basic, /forecast, /\<unix_timestamp\> for detailed requests). e.g. /search/helsinki/current  
 
 

@@ -16,7 +16,7 @@ import logging
 #
 # PM Weather API  
 #
-# /search/<location>
+# /search/<countrycode>/<location> (EE/ee for Estonia)
 # Searches the Geonames database for the corresponding location, takes the coordinates of the first results and sends them to the Darksky API request. Fetches full data if no further endpoint is specified. (/current, /basic, /forecast, /<unix_timestamp> for detailed requests). e.g. /search/helsinki/current
 #
 #
@@ -123,8 +123,10 @@ def encoding(slug):
     return slug
 
 
-def getGeoNames(slug):
-    url = GEONAMES_URL + slug + '&featureClass=A&featureClass=P&maxRows=10&username=valgev6lur'
+def getGeoNames(location, countrycode):
+    url = GEONAMES_URL + location + '&country=' + countrycode \
+          + '&featureClass=A&featureClass=P&maxRows=10&username=valgev6lur'
+    print(url)
     return url
 
 
@@ -156,10 +158,10 @@ def parseJson(url, Class):
 # Search for locations around the world. This method returns a DarkSky API request,
 # JSON-formatted. It uses Geonames to get the coordinates for a certain location.
 # If a location was not found, it will return an error.
-@bp.route('/search/<location>')
-def search_location(location):
+@bp.route('/search/<countrycode>/<location>')
+def search_location(countrycode, location):
     try:
-        url = getGeoNames(encoding(location))
+        url = getGeoNames(encoding(location), countrycode)
     except NameError:
         abort(404)
     try:
@@ -170,7 +172,6 @@ def search_location(location):
         fulldict = {}
         fulldict['location'] = darkSky.data
         fulldict['location']['name'] = location.title()
-        fulldict['location']['coordinates'] = coordinates
         output = dumpjson(fulldict)
     except IndexError:
         output = abort(404)
@@ -179,10 +180,10 @@ def search_location(location):
 
 # Returns the current (or forecast) dataset for the searched location. Used to
 # fill the current (or future) weather information box
-@bp.route('/search/<location>/<endpoint>')
-def search_location_endpoints(location, endpoint):
+@bp.route('/search/<countrycode>/<location>/<endpoint>')
+def search_location_endpoints(countrycode, location, endpoint):
     try:
-        url = getGeoNames(encoding(location))
+        url = getGeoNames(encoding(location), countrycode)
     except NameError:
         abort(404)
     try:
@@ -194,17 +195,14 @@ def search_location_endpoints(location, endpoint):
         if endpoint == 'current':
             darkSky.data['currently']['name'] = location.title()
             fulldict['location'] = darkSky.data['currently']
-            fulldict['location']['coordinates'] = coordinates
             output = dumpjson(fulldict)
         elif endpoint == 'forecast':
             darkSky.data['daily']['name'] = location.title()
             fulldict['location'] = darkSky.data['daily']
-            fulldict['location']['coordinates'] = coordinates
             output = dumpjson(fulldict)
         elif endpoint == 'basic':
             fulldict['location'] = darkSky.basicforecast()
             fulldict['location']['name'] = location.title()
-            fulldict['location']['coordinates'] = coordinates
             output = dumpjson(fulldict)
         else:
             url = getURL(coordinates, endpoint)
@@ -250,17 +248,14 @@ def coordinates_endpoints(coordinates, endpoint):
         if endpoint == 'current':
             darkSky.data['currently']['address'] = name.address
             fulldict['location'] = darkSky.data['currently']
-            fulldict['location']['coordinates'] = coordinates
             output = dumpjson(fulldict)
         elif endpoint == 'forecast':
             darkSky.data['daily']['address'] = name.address
             fulldict['location'] = darkSky.data['daily']
-            fulldict['location']['coordinates'] = coordinates
             output = dumpjson(fulldict)
         elif endpoint == 'basic':
             fulldict['location'] = darkSky.basicforecast()
             fulldict['location']['address'] = name.address
-            fulldict['location']['coordinates'] = coordinates
             output = dumpjson(fulldict)
         else:
             url = getURL(coordinates, endpoint)
