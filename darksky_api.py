@@ -62,6 +62,20 @@ GEONAMES_URL = 'http://api.geonames.org/searchJSON?q='
 geolocator = Nominatim()
 
 
+def graylogerror():
+    app.config['GRAYLOG_HOST'] = GRAYLOG_SERVER_HOST
+    app.config['GRAYLOG_PORT'] = int(GRAYLOG_SERVER_PORT)
+    graylog = Graylog(app)
+
+    graylog.info('Message', extra={
+        'extra': 'metadata',
+    })
+
+    logger = logging.getLogger(__name__)
+    logger.addHandler(graylog.handler)
+    logger.info('Message')
+
+
 def getDarkSkySUFFIX(lang):
     if lang == 'et':
         return '?units=si&lang=et'
@@ -235,21 +249,25 @@ def coordinates_endpoints(lang, coordinates, endpoint):
 
 @bp.errorhandler(400)
 def fouroo(e):
+    graylogerror()
     return make_response(jsonify({'error': 'Error 400 Bad Request'}), 400)
 
 
 @bp.errorhandler(404)
 def fourofour(e):
+    graylogerror()
     return make_response(jsonify({'error': 'Error 404 Not Found'}), 404)
 
 
 @bp.errorhandler(500)
 def fiveoo(e):
+    graylogerror()
     return make_response(jsonify({'error': 'Error 500 Internal Server Error'}), 500)
 
 
 @bp.errorhandler(503)
 def fiveothree(e):
+    graylogerror()
     return make_response(jsonify({'error': 'Error 503 Service Unavailable'}), 503)
 
 
@@ -264,17 +282,6 @@ app = Flask(__name__)
 app.register_blueprint(bp, url_prefix=APP_URL_PREFIX)
 CORS(app, resources=r'/*')
 
-app.config['GRAYLOG_HOST'] = GRAYLOG_SERVER_HOST
-app.config['GRAYLOG_PORT'] = int(GRAYLOG_SERVER_PORT)
-graylog = Graylog(app)
-
-graylog.info('Message', extra={
-    'extra': 'metadata',
-})
-
-logger = logging.getLogger(__name__)
-logger.addHandler(graylog.handler)
-logger.info('Message')
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=int(APP_PORT))
