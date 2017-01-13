@@ -30,5 +30,5 @@ Every response is in **JSON:** first element is 'location' and every 'location' 
   et for Estonian  
   en for English
 
-
-
+**todo**
+ Add lv language
