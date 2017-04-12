@@ -31,6 +31,7 @@ import logging
 # et for Estonian
 # ru for Russian
 # en for English
+# lv for Latvian
 #
 # Every response is in JSON: first element is 'location' and every 'location' has a 'name' attribute. (Coordinates has an 'address' field instead.)
 #
@@ -83,12 +84,14 @@ def getDarkSkySUFFIX(lang):
         return '?units=si'
     elif lang == 'ru':
         return '?units=si&lang=ru'
+    elif lang == 'lv':
+        return '?units=si&lang=lv'
     else:
         return abort(400)
 
 
 def checkLang(lang):
-    if lang == 'et' or lang == 'ru' or lang == 'en':
+    if lang == 'et' or lang == 'ru' or lang == 'en' or lang == 'lv':
         return make_response(jsonify({'error': 'Specify a location'}))
     else:
         return abort(400)
@@ -333,7 +336,7 @@ def fiveothree(e):
 
 @bp.after_request
 def add_header(response):
-    response.cache_control.max_age = 300
+    response.cache_control.max_age = 900
     response.content_type = 'application/json; charset=utf-8'
     return response
 

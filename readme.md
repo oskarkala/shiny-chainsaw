@@ -1,5 +1,5 @@
 # PM Weather API  
-  
+
 **/\<language\>/\<location\>**  
 Searches the Geonames database for the corresponding location, takes the coordinates of the first results and  sends them to the Darksky API request. Fetches full data if no further endpoint is specified. (/current, /  basic, /forecast for detailed requests). e.g. et/helsinki/current    
 
@@ -26,9 +26,8 @@ Every response is in **JSON:** first element is 'location' and every 'location' 
   
 
 **languages:**  
-  ru for Russian  
   et for Estonian  
   en for English
-
-
+  ru for Russian  
+  lv for Latvian
 
