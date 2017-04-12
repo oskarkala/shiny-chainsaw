@@ -60,7 +60,7 @@ class Graylog(logging.Logger):
         self.config.setdefault('GRAYLOG_FACILITY', 'flask')
         self.config.setdefault('GRAYLOG_EXTRA_FIELDS', True)
         self.config.setdefault('GRAYLOG_ADD_DEBUG_FIELDS', True)
-        self.config.setdefault('GRAYLOG_CONFIGURE_MIDDLEWARE', False)
+        self.config.setdefault('GRAYLOG_CONFIGURE_MIDDLEWARE', True)
 
         # Configure the logging handler and attach to this logger
         self.handler = graypy.GELFHandler(
