@@ -176,6 +176,8 @@ def search_location_endpoints(location, lang, endpoint):
         if endpoint == 'current':
             darkSky.data['currently']['name'] = location.title()
             fulldict['location'] = darkSky.data['currently']
+            fulldict['location']['latitude'] = darkSky.data['latitude']
+            fulldict['location']['longitude'] = darkSky.data['longitude']
             output = dumpjson(fulldict)
         elif endpoint == 'forecast':
             darkSky.data['daily']['name'] = location.title()
@@ -215,7 +217,7 @@ def coordinates(coordinates, lang):
 
 
 # Detailed response with coordinates
-@bp.route('<lang>/coordinates/<coordinates>/<endpoint>')
+@bp.route('/<lang>/coordinates/<coordinates>/<endpoint>')
 def coordinates_endpoints(lang, coordinates, endpoint):
     try:
         url = getURL(coordinates, lang)
@@ -242,6 +244,64 @@ def coordinates_endpoints(lang, coordinates, endpoint):
             locationUNIX = parseJson(url, DarkSky)
             fulldict[name.address] = locationUNIX.data
             output = dumpjson(fulldict)
+    except NameError:
+        output = abort(404)
+    return output
+
+
+estonianmap = {
+    'Tallinn',
+    'Tartu',
+    'Pärnu',
+    'Antsla',
+    'Elva',
+    'Haapsalu',
+    'Jõgeva',
+    'Jõhvi',
+    'Kallaste',
+    'Karksi-Nuia',
+    'Kehra',
+    'Keila',
+    'Kihnu',
+    'Kilingi-Nõmme',
+    'Kiviõli',
+    'Kohtla-Järve',
+    'Kunda',
+    'Kuressaare',
+    'Kärdla',
+    'Loksa',
+    'Maardu',
+    'Mõisaküla',
+    'Mustvee',
+    'Narva',
+    'Narva-Jõesuu',
+    'Otepää',
+    'Paide',
+    'Paldiski',
+    'Põltsamaa',
+    'Põlva',
+    'Rakvere',
+    'Rapla',
+    'Räpina',
+    'Ruhnu',
+    'Saue',
+    'Sillamäe',
+    'Tapa',
+    'Tõrva',
+    'Türi',
+    'Valga',
+    'Viljandi',
+    'Võhma',
+    'Võru'}
+
+
+@bp.route('/<lang>/map/estonian')
+def map(lang):
+    try:
+        maparray = {}
+        for i in estonianmap:
+            maparray[i] = json.loads(search_location_endpoints(i, lang, 'current').decode('utf-8'))
+        output = dumpjson(maparray)
     except NameError:
         output = abort(404)
     return output
@@ -285,3 +345,4 @@ CORS(app, resources=r'/*')
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=int(APP_PORT))
+        #app.run()
