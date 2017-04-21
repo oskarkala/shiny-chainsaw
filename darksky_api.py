@@ -40,6 +40,7 @@ import logging
 API_KEY = os.environ['API_KEY']
 
 GRAYLOG_SERVER_HOST = os.environ['GRAYLOG_SERVER_HOST']
+#GRAYLOG_SERVER_HOST = 'graylog.emeedia.eu'
 
 GRAYLOG_SERVER_PORT = 12201
 if 'GRAYLOG_SERVER_PORT' in os.environ:
@@ -63,18 +64,10 @@ GEONAMES_URL = 'http://api.geonames.org/searchJSON?q='
 geolocator = Nominatim()
 
 
-def graylogerror():
-    app.config['GRAYLOG_HOST'] = GRAYLOG_SERVER_HOST
-    app.config['GRAYLOG_PORT'] = int(GRAYLOG_SERVER_PORT)
-    graylog = Graylog(app)
-
+def graylogerror(e):
     graylog.info('Message', extra={
         'extra': 'metadata',
     })
-
-    logger = logging.getLogger(__name__)
-    logger.addHandler(graylog.handler)
-    logger.info('Message')
 
 
 def getDarkSkySUFFIX(lang):
@@ -310,28 +303,67 @@ def map(lang):
     return output
 
 
-@bp.errorhandler(400)
+@bp.route('/error/<slug>')
+def error_slug(slug):
+    if slug == '400':
+        output = abort(400)
+    elif slug == '404':
+        output = abort(404)
+    elif slug == '500':
+        output = abort(500)
+    elif slug == '503':
+        output = abort(503)
+    else:
+        output = 'output'
+    return output
+
+
+@bp.app_errorhandler(400)
 def fouroo(e):
-    graylogerror()
+    graylogerror(400)
     return make_response(jsonify({'error': 'Error 400 Bad Request'}), 400)
 
 
-@bp.errorhandler(404)
+@bp.app_errorhandler(404)
 def fourofour(e):
-    graylogerror()
+    graylogerror(404)
     return make_response(jsonify({'error': 'Error 404 Not Found'}), 404)
 
 
-@bp.errorhandler(500)
+@bp.app_errorhandler(500)
 def fiveoo(e):
-    graylogerror()
+    graylogerror(500)
     return make_response(jsonify({'error': 'Error 500 Internal Server Error'}), 500)
 
 
-@bp.errorhandler(503)
+@bp.app_errorhandler(503)
 def fiveothree(e):
-    graylogerror()
+    graylogerror(503)
     return make_response(jsonify({'error': 'Error 503 Service Unavailable'}), 503)
+
+# @bp.errorhandler(400)
+# def fouroo(e):
+#     graylogerror()
+#     return make_response(jsonify({'error': 'Error 400 Bad Request'}), 400)
+#
+#
+# @bp.errorhandler(404)
+# def fourofour(e):
+#     graylogerror()
+#     return make_response(jsonify({'error': 'Error 404 Not Found'}), 404)
+#
+#
+# @bp.errorhandler(500)
+# def fiveoo(e):
+#     graylogerror()
+#     return make_response(jsonify({'error': 'Error 500 Internal Server Error'}), 500)
+#
+#
+# @bp.errorhandler(503)
+# def fiveothree(e):
+#     graylogerror()
+#     return make_response(jsonify({'error': 'Error 503 Service Unavailable'}), 503)
+#
 
 
 @bp.after_request
@@ -345,6 +377,17 @@ app = Flask(__name__)
 app.register_blueprint(bp, url_prefix=APP_URL_PREFIX)
 CORS(app, resources=r'/*')
 
+app.config['GRAYLOG_HOST'] = GRAYLOG_SERVER_HOST
+app.config['GRAYLOG_PORT'] = int(GRAYLOG_SERVER_PORT)
+graylog = Graylog(app)
+
+graylog.info('Message', extra={
+    'extra': 'metadata',
+})
+
+logger = logging.getLogger(__name__)
+logger.addHandler(graylog.handler)
+logger.info('Message')
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=int(APP_PORT))

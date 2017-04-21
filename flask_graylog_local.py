@@ -8,7 +8,7 @@ import graypy
 class Graylog(logging.Logger):
     __slots__ = ['app', 'config', 'handler']
 
-    def __init__(self, app=None, config=None, level=logging.NOTSET):
+    def __init__(self, app=None, config=None, level=logging.ERROR):
         """
         Constructor for flask.ext.graylog.Graylog
 
@@ -60,7 +60,7 @@ class Graylog(logging.Logger):
         self.config.setdefault('GRAYLOG_FACILITY', 'flask')
         self.config.setdefault('GRAYLOG_EXTRA_FIELDS', True)
         self.config.setdefault('GRAYLOG_ADD_DEBUG_FIELDS', True)
-        self.config.setdefault('GRAYLOG_CONFIGURE_MIDDLEWARE', False)
+        self.config.setdefault('GRAYLOG_CONFIGURE_MIDDLEWARE', True)
 
         # Configure the logging handler and attach to this logger
         self.handler = graypy.GELFHandler(
@@ -124,8 +124,11 @@ class Graylog(logging.Logger):
         }
 
         #message = 'Finishing request for "%s %s" from %s' % (request.method, request.url, extra.get('remote_addr', '-'))
-        message = 'oskar-api'
-        self.info(message, extra=extra)
-
+        if response.status_code != 200:
+            #print('im ', response.status_code)
+            message = 'oskar-api'
+            self.info(message, extra=extra)
+        #print(response, type(response.status_code))
         # Always return the response
+
         return response
