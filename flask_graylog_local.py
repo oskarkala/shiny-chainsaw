@@ -8,7 +8,7 @@ import graypy
 class Graylog(logging.Logger):
     __slots__ = ['app', 'config', 'handler']
 
-    def __init__(self, app=None, config=None, level=logging.ERROR):
+    def __init__(self, app=None, config=None, level=logging.NOTSET):
         """
         Constructor for flask.ext.graylog.Graylog
 
@@ -124,11 +124,7 @@ class Graylog(logging.Logger):
         }
 
         #message = 'Finishing request for "%s %s" from %s' % (request.method, request.url, extra.get('remote_addr', '-'))
-        if response.status_code != 200:
-            #print('im ', response.status_code)
-            message = 'oskar-api'
-            self.info(message, extra=extra)
-        #print(response, type(response.status_code))
-        # Always return the response
+        message = 'oskar-api'
+        self.info(message, extra=extra)
 
         return response

@@ -12,6 +12,8 @@ import urllib
 import os
 import urllib.parse
 import logging
+
+
 #
 # PM Weather API  
 #
@@ -62,12 +64,6 @@ bp = Blueprint('weather', __name__,
 GEONAMES_URL = 'http://api.geonames.org/searchJSON?q='
 
 geolocator = Nominatim()
-
-
-def graylogerror(e):
-    graylog.info('Message', extra={
-        'extra': 'metadata',
-    })
 
 
 def getDarkSkySUFFIX(lang):
@@ -125,6 +121,13 @@ def parseJson(url, Class):
         abort(e.code)
     except ImportError:
         abort(500)
+
+
+#def graylogger(e):
+#    graylog.error(e, extra={
+#        'extra': 'metadata',
+#    })
+#    logger.error(str(e))
 
 
 @bp.route('/<lang>')
@@ -306,12 +309,16 @@ def map(lang):
 @bp.route('/error/<slug>')
 def error_slug(slug):
     if slug == '400':
+        logger.error(slug)
         output = abort(400)
     elif slug == '404':
+        logger.error(slug)
         output = abort(404)
     elif slug == '500':
+        logger.error(slug)
         output = abort(500)
     elif slug == '503':
+        logger.error(slug)
         output = abort(503)
     else:
         output = 'output'
@@ -320,50 +327,26 @@ def error_slug(slug):
 
 @bp.app_errorhandler(400)
 def fouroo(e):
-    graylogerror(400)
+    #graylogger(e)
     return make_response(jsonify({'error': 'Error 400 Bad Request'}), 400)
 
 
-@bp.app_errorhandler(404)
+@bp.errorhandler(404)
 def fourofour(e):
-    graylogerror(404)
+    #graylogger(e)
     return make_response(jsonify({'error': 'Error 404 Not Found'}), 404)
 
 
 @bp.app_errorhandler(500)
 def fiveoo(e):
-    graylogerror(500)
+    #graylogger(e)
     return make_response(jsonify({'error': 'Error 500 Internal Server Error'}), 500)
 
 
-@bp.app_errorhandler(503)
+@bp.errorhandler(503)
 def fiveothree(e):
-    graylogerror(503)
+    #graylogger(e)
     return make_response(jsonify({'error': 'Error 503 Service Unavailable'}), 503)
-
-# @bp.errorhandler(400)
-# def fouroo(e):
-#     graylogerror()
-#     return make_response(jsonify({'error': 'Error 400 Bad Request'}), 400)
-#
-#
-# @bp.errorhandler(404)
-# def fourofour(e):
-#     graylogerror()
-#     return make_response(jsonify({'error': 'Error 404 Not Found'}), 404)
-#
-#
-# @bp.errorhandler(500)
-# def fiveoo(e):
-#     graylogerror()
-#     return make_response(jsonify({'error': 'Error 500 Internal Server Error'}), 500)
-#
-#
-# @bp.errorhandler(503)
-# def fiveothree(e):
-#     graylogerror()
-#     return make_response(jsonify({'error': 'Error 503 Service Unavailable'}), 503)
-#
 
 
 @bp.after_request
@@ -385,9 +368,13 @@ graylog.info('Message', extra={
     'extra': 'metadata',
 })
 
+
+#logging.basicConfig(filename='/Users/oskarkala/repos/oskar-api/logger.log', level=logging.NOTSET)
 logger = logging.getLogger(__name__)
+
 logger.addHandler(graylog.handler)
 logger.info('Message')
+
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=int(APP_PORT))
