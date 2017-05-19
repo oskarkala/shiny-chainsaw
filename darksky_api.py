@@ -123,11 +123,10 @@ def parseJson(url, Class):
         abort(500)
 
 
-#def graylogger(e):
-#    graylog.error(e, extra={
-#        'extra': 'metadata',
-#    })
-#    logger.error(str(e))
+def graylogger(e):
+   graylog.error(e, extra={
+       'extra': 'metadata',
+   })
 
 
 @bp.route('/<lang>')
@@ -309,17 +308,15 @@ def map(lang):
 @bp.route('/error/<slug>')
 def error_slug(slug):
     if slug == '400':
-        logger.error(slug)
         output = abort(400)
     elif slug == '404':
-        logger.error(slug)
         output = abort(404)
     elif slug == '500':
-        logger.error(slug)
         output = abort(500)
     elif slug == '503':
-        logger.error(slug)
         output = abort(503)
+    elif slug == '504':
+        output = abort(504)
     else:
         output = 'output'
     return output
@@ -327,26 +324,32 @@ def error_slug(slug):
 
 @bp.app_errorhandler(400)
 def fouroo(e):
-    #graylogger(e)
+    graylogger(e)
     return make_response(jsonify({'error': 'Error 400 Bad Request'}), 400)
 
 
 @bp.errorhandler(404)
 def fourofour(e):
-    #graylogger(e)
+    graylogger(e)
     return make_response(jsonify({'error': 'Error 404 Not Found'}), 404)
 
 
 @bp.app_errorhandler(500)
 def fiveoo(e):
-    #graylogger(e)
+    graylogger(e)
     return make_response(jsonify({'error': 'Error 500 Internal Server Error'}), 500)
 
 
 @bp.errorhandler(503)
 def fiveothree(e):
-    #graylogger(e)
+    graylogger(e)
     return make_response(jsonify({'error': 'Error 503 Service Unavailable'}), 503)
+
+
+@bp.errorhandler(504)
+def fiveofour(e):
+    graylogger(e)
+    return make_response(jsonify({'error': 'Error 504 Gateway Timeout'}), 503)
 
 
 @bp.after_request
@@ -364,18 +367,7 @@ app.config['GRAYLOG_HOST'] = GRAYLOG_SERVER_HOST
 app.config['GRAYLOG_PORT'] = int(GRAYLOG_SERVER_PORT)
 graylog = Graylog(app)
 
-graylog.info('Message', extra={
-    'extra': 'metadata',
-})
-
-
-#logging.basicConfig(filename='/Users/oskarkala/repos/oskar-api/logger.log', level=logging.NOTSET)
-logger = logging.getLogger(__name__)
-
-logger.addHandler(graylog.handler)
-logger.info('Message')
-
 
 if __name__ == '__main__':
-        app.run(host='0.0.0.0', port=int(APP_PORT))
-        #app.run()
+    app.run(host='0.0.0.0', port=int(APP_PORT))
+    #app.run()

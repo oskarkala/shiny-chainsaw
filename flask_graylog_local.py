@@ -8,7 +8,7 @@ import graypy
 class Graylog(logging.Logger):
     __slots__ = ['app', 'config', 'handler']
 
-    def __init__(self, app=None, config=None, level=logging.NOTSET):
+    def __init__(self, app=None, config=None, level=logging.WARNING):
         """
         Constructor for flask.ext.graylog.Graylog
 
