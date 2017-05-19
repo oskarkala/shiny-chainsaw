@@ -11,7 +11,6 @@ import json
 import urllib
 import os
 import urllib.parse
-import logging
 
 
 #
