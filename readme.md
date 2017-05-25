@@ -8,6 +8,8 @@ Searches the Geonames database for the corresponding location, takes the coordin
 Works the same way as ‘\<location\>’. (/current; /forecast, /basic for detailed requests)   e.g. ru/coordinates/59.4372,24.7454  
 Coordinates also gives the address of the specified coordinates. Its JSON field is 'address'   e.g "19, Väike-Tähe, Kesklinn, Tartu, Tartu maakond, 50103, Eesti",  
 
+**/\<language\>/map/\<map\>**  
+One request to get data for either the **Estonian map** (with cities from PM website) or **European map**. Endpoint respectively **/estonia** or **/europe**
 
 **endpoints:**  
 /current: displays the current information  

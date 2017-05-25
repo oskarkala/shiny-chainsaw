@@ -246,7 +246,7 @@ def coordinates_endpoints(lang, coordinates, endpoint):
     return output
 
 
-estonianmap = {
+estonian_map = {
     'Tallinn',
     'Tartu',
     'Pärnu',
@@ -291,13 +291,67 @@ estonianmap = {
     'Võhma',
     'Võru'}
 
+european_map = {
+    'Albania,Tirana',
+    'Andorra la Vella',
+    'Austria,Vienna',
+    'Belarus,Minsk',
+    'Belgium,Brussels',
+    'Sarajevo',
+    'Bulgaria,Sofia',
+    'Croatia,Zagreb',
+    'Cyprus,Nicosia',
+    'Czechia,Prague',
+    'Denmark,Copenhagen',
+    'Estonia,Tallinn',
+    'Finland,Helsinki',
+    'France,Paris',
+    'Georgia,Tbilisi',
+    'Germany,Berlin',
+    'Greece,Athens',
+    'Hungary,Budapest',
+    'Iceland,Reykjavik',
+    'Ireland,Dublin',
+    'Italy,Rome',
+    'Latvia,Riga',
+    'Liechtenstein,Vaduz',
+    'Lithuania,Vilnius',
+    'Luxembourg',
+    'Macedonia,Skopje',
+    'Malta,Valletta',
+    'Moldova,Chisinau',
+    'Monaco,Monaco',
+    'Montenegro,Podgorica',
+    'Netherlands,Amsterdam',
+    'Norway,Oslo',
+    'Poland,Warsaw',
+    'Portugal,Lisbon',
+    'Romania,Bucharest',
+    'Russia,Moscow',
+    'San Marino',
+    'Serbia,Belgrade',
+    'Slovakia,Bratislava',
+    'Slovenia,Ljubljana',
+    'Spain,Madrid',
+    'Sweden,Stockholm',
+    'Switzerland,Bern',
+    'Turkey,Ankara',
+    'Ukraine,Kiev',
+    'United Kingdom,London',
+    'Vatican'
+}
 
-@bp.route('/<lang>/map/estonian')
-def map(lang):
+
+@bp.route('/<lang>/map/<area>')
+def map(lang, area):
     try:
+        if area == 'europe':
+            map = european_map
+        elif area == 'estonia':
+            map = estonian_map
         maparray = {}
-        for i in estonianmap:
-            maparray[i] = json.loads(search_location_endpoints(i, lang, 'current').decode('utf-8'))
+        for i in map:
+            maparray[i] = json.loads(search_location(location=i, lang=lang).decode('utf-8'))
         output = dumpjson(maparray)
     except NameError:
         output = abort(404)
