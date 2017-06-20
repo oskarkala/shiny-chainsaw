@@ -342,20 +342,20 @@ european_map = {
 }
 
 
-@bp.route('/<lang>/map/<area>')
-def map(lang, area):
-    try:
-        if area == 'europe':
-            map = european_map
-        elif area == 'estonia':
-            map = estonian_map
-        maparray = {}
-        for i in map:
-            maparray[i] = json.loads(search_location(location=i, lang=lang).decode('utf-8'))
-        output = dumpjson(maparray)
-    except NameError:
-        output = abort(404)
-    return output
+# @bp.route('/<lang>/map/estonia')
+# def map(lang):
+#     try:
+#         #if area == 'europe':
+#         #    map = european_map
+#         #elif area == 'estonia':
+#         #    map = estonian_map
+#         maparray = {}
+#         for i in estonian_map:
+#             maparray[i] = json.loads(search_location(location=i, lang=lang).decode('utf-8'))
+#         output = dumpjson(maparray)
+#     except NameError:
+#         output = abort(404)
+#     return output
 
 
 @bp.route('/error/<slug>')
