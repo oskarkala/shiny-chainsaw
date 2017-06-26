@@ -376,7 +376,7 @@ def map(lang, area):
         elif area == 'estonia':
            map = estonian_map
 
-        pool = ThreadPool(int(len(map)*CPU_COUNT))
+        pool = ThreadPool(len(map))
         json_array = {}
         pooled_list = pool.map(partial(search_location, lang=lang), map)
 
@@ -459,5 +459,5 @@ app.config['GRAYLOG_PORT'] = int(GRAYLOG_SERVER_PORT)
 graylog = Graylog(app)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(APP_PORT))
-    #app.run()
+    #app.run(host='0.0.0.0', port=int(APP_PORT))
+    app.run()
