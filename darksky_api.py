@@ -6,6 +6,10 @@ from location_class import DarkSky
 from geonames_parser import Geonames
 from geopy.geocoders import Nominatim
 from urllib import error
+from multiprocessing.dummy import Pool as ThreadPool
+from functools import partial
+import multiprocessing
+import time
 import urllib.request
 import json
 import urllib
@@ -55,6 +59,7 @@ APP_URL_PREFIX = ''
 if 'APP_URL_PREFIX' in os.environ:
     APP_URL_PREFIX = os.environ['APP_URL_PREFIX']
 
+CPU_COUNT = multiprocessing.cpu_count()
 DARK_SKY_URL = 'https://api.darksky.net/forecast/'
 
 bp = Blueprint('weather', __name__,
@@ -342,20 +347,53 @@ european_map = {
 }
 
 
-# @bp.route('/<lang>/map/estonia')
-# def map(lang):
-#     try:
-#         #if area == 'europe':
-#         #    map = european_map
-#         #elif area == 'estonia':
-#         #    map = estonian_map
-#         maparray = {}
-#         for i in estonian_map:
-#             maparray[i] = json.loads(search_location(location=i, lang=lang).decode('utf-8'))
-#         output = dumpjson(maparray)
-#     except NameError:
-#         output = abort(404)
-#     return output
+def create_map(location, lang):
+    try:
+        url = getGeoNames(encoding(location))
+    except NameError:
+        abort(404)
+    try:
+        geoName = parseJson(url, Geonames)
+        coordinates = geoName.getCoordinates(0)
+        forDarkSky = getURL(coordinates, lang)
+        darkSky = parseJson(forDarkSky, DarkSky)
+        fulldict = {}
+        fulldict['location'] = darkSky.data
+        fulldict['location']['name'] = location.title()
+        output = dumpjson(fulldict)
+    except IndexError:
+        output = abort(404)
+    return output
+
+
+@bp.route('/<lang>/map/<area>')
+def map(lang, area):
+
+    start = time.time()
+    try:
+        if area == 'europe':
+           map = european_map
+        elif area == 'estonia':
+           map = estonian_map
+
+        pool = ThreadPool(int(len(map)*CPU_COUNT))
+        json_array = {}
+        pooled_list = pool.map(partial(search_location, lang=lang), map)
+
+        for item in pooled_list:
+            item = json.loads(str(item, 'utf-8'))
+            json_array[item['location']['name']] = item
+        output = dumpjson(json_array)
+
+        pool.close()
+        pool.join()
+
+    except NameError:
+        output = abort(404)
+
+    end = time.time()
+    print("Time elapsed with the request: ", end-start)
+    return output
 
 
 @bp.route('/error/<slug>')
@@ -419,7 +457,6 @@ CORS(app, resources=r'/*')
 app.config['GRAYLOG_HOST'] = GRAYLOG_SERVER_HOST
 app.config['GRAYLOG_PORT'] = int(GRAYLOG_SERVER_PORT)
 graylog = Graylog(app)
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(APP_PORT))
