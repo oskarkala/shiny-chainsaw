@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import Flask, abort, Blueprint, jsonify, make_response
 from flask_cors import CORS
-from flask_graylog_local import Graylog
 from location_class import DarkSky
 from geonames_parser import Geonames
 from geopy.geocoders import Nominatim
@@ -42,14 +41,7 @@ import urllib.parse
 #
 
 
-API_KEY = os.environ['API_KEY']
-
-GRAYLOG_SERVER_HOST = os.environ['GRAYLOG_SERVER_HOST']
-#GRAYLOG_SERVER_HOST = 'graylog.emeedia.eu'
-
-GRAYLOG_SERVER_PORT = 12201
-if 'GRAYLOG_SERVER_PORT' in os.environ:
-    GRAYLOG_SERVER_PORT = os.environ['GRAYLOG_SERVER_PORT']
+API_KEY = '56458a6ddfdc4124cf7505458605c3cc'
 
 APP_PORT = 80
 if 'APP_PORT' in os.environ:
@@ -127,10 +119,10 @@ def parseJson(url, Class):
         abort(500)
 
 
-def graylogger(e):
-   graylog.error(e, extra={
-       'extra': 'metadata',
-   })
+# def graylogger(e):
+#    graylog.error(e, extra={
+#        'extra': 'metadata',
+#    })
 
 
 @bp.route('/<lang>')
@@ -415,31 +407,26 @@ def error_slug(slug):
 
 @bp.app_errorhandler(400)
 def fouroo(e):
-    graylogger(e)
     return make_response(jsonify({'error': 'Error 400 Bad Request'}), 400)
 
 
 @bp.errorhandler(404)
 def fourofour(e):
-    graylogger(e)
     return make_response(jsonify({'error': 'Error 404 Not Found'}), 404)
 
 
 @bp.app_errorhandler(500)
 def fiveoo(e):
-    graylogger(e)
     return make_response(jsonify({'error': 'Error 500 Internal Server Error'}), 500)
 
 
 @bp.errorhandler(503)
 def fiveothree(e):
-    graylogger(e)
     return make_response(jsonify({'error': 'Error 503 Service Unavailable'}), 503)
 
 
 @bp.errorhandler(504)
 def fiveofour(e):
-    graylogger(e)
     return make_response(jsonify({'error': 'Error 504 Gateway Timeout'}), 503)
 
 
@@ -454,10 +441,7 @@ app = Flask(__name__)
 app.register_blueprint(bp, url_prefix=APP_URL_PREFIX)
 CORS(app, resources=r'/*')
 
-app.config['GRAYLOG_HOST'] = GRAYLOG_SERVER_HOST
-app.config['GRAYLOG_PORT'] = int(GRAYLOG_SERVER_PORT)
-graylog = Graylog(app)
-
 if __name__ == '__main__':
     #app.run(host='0.0.0.0', port=int(APP_PORT))
     app.run()
+    # app.run(host='127.0.0.1', port=8080, debug=True)
