@@ -405,6 +405,12 @@ def error_slug(slug):
     return output
 
 
+@bp.route('/')
+def hello():
+    """Return a friendly HTTP greeting."""
+    return 'Hello World!'
+
+
 @bp.app_errorhandler(400)
 def fouroo(e):
     return make_response(jsonify({'error': 'Error 400 Bad Request'}), 400)
@@ -443,5 +449,5 @@ CORS(app, resources=r'/*')
 
 if __name__ == '__main__':
     #app.run(host='0.0.0.0', port=int(APP_PORT))
-    app.run()
-    # app.run(host='127.0.0.1', port=8080, debug=True)
+    # app.run()
+    app.run(host='127.0.0.1', port=8080)
